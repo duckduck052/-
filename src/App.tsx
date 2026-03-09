@@ -195,60 +195,165 @@ export default function App() {
 
   const generatePPTX = () => {
     let pptx = new pptxgen();
-    pptx.layout = "LAYOUT_WIDE";
+    pptx.layout = "LAYOUT_WIDE"; // 13.33 x 7.5 inches
+
+    const BANA_PURPLE = "702182";
+    const TEXT_DARK = "1E293B"; // Slate 800
+    const TEXT_GRAY = "64748B"; // Slate 500
+    const BANA_LIGHT = "F8F4F9";
+    const WHITE = "FFFFFF";
+
+    // Helper for Section Titles
+    const addSectionTitle = (slide: any, sub: string, main: string, isLight: boolean = false) => {
+      slide.addText(sub, { 
+        x: 0, y: 0.6, w: "100%", align: "center", color: isLight ? WHITE : BANA_PURPLE, fontSize: 12, bold: true, fontFace: "Arial", charSpacing: 4 
+      });
+      slide.addText(main, { 
+        x: 0, y: 1.0, w: "100%", align: "center", color: isLight ? WHITE : BANA_PURPLE, fontSize: 32, bold: true, fontFace: "Malgun Gothic" 
+      });
+    };
 
     // 1. Cover
     let slide1 = pptx.addSlide();
-    slide1.background = { color: "702182" };
-    slide1.addText("바나프레소 메뉴개발 직무 지원", { x: 0, y: 2.5, w: "100%", align: "center", color: "FFFFFF", fontSize: 18, bold: true });
-    slide1.addText("Menu Development\nPortfolio", { x: 0, y: 3.2, w: "100%", align: "center", color: "FFFFFF", fontSize: 54, bold: true });
-    slide1.addText(`Applicant: ${data.name}`, { x: 0, y: 5.5, w: "100%", align: "center", color: "FFFFFF", fontSize: 24 });
+    slide1.background = { color: BANA_PURPLE };
+    
+    // Abstract background shapes (mimicking the blur)
+    slide1.addShape(pptx.ShapeType.ellipse, { x: -1, y: -1, w: 5, h: 5, fill: { color: WHITE, transparency: 90 } });
+    slide1.addShape(pptx.ShapeType.ellipse, { x: 9, y: 4, w: 5, h: 5, fill: { color: WHITE, transparency: 90 } });
+
+    slide1.addText("바나프레소 메뉴개발 직무 지원", { 
+      x: 0, y: 2.2, w: "100%", align: "center", color: WHITE, fontSize: 16, bold: true, fontFace: "Malgun Gothic", charSpacing: 4
+    });
+    slide1.addText("Menu Development\nPortfolio", { 
+      x: 0, y: 2.8, w: "100%", align: "center", color: WHITE, fontSize: 64, bold: true, fontFace: "Arial" 
+    });
+    slide1.addShape(pptx.ShapeType.rect, { x: 6.1, y: 5.2, w: 1.1, h: 0.05, fill: { color: WHITE } });
+    slide1.addText(`Applicant: ${data.name}`, { 
+      x: 0, y: 5.8, w: "100%", align: "center", color: WHITE, fontSize: 22, fontFace: "Malgun Gothic", charSpacing: 2
+    });
 
     // 2. About Me
     let slide2 = pptx.addSlide();
-    slide2.addText("About Me", { x: 0.5, y: 0.5, color: "702182", fontSize: 14, bold: true });
-    slide2.addText("커피와 음료의 본질을 이해하는 개발자", { x: 0.5, y: 1.0, color: "702182", fontSize: 32, bold: true });
-    slide2.addImage({ path: data.profileImage, x: 0.5, y: 2.0, w: 4, h: 5 });
-    slide2.addText(data.aboutText1, { x: 5.0, y: 2.0, w: 7, fontSize: 16, color: "444444" });
-    slide2.addText(data.aboutText2, { x: 5.0, y: 4.5, w: 7, fontSize: 16, color: "444444" });
-
-    // 3. Experience
-    let slide3 = pptx.addSlide();
-    slide3.background = { color: "F8F4F9" };
-    slide3.addText("Experience", { x: 0, y: 0.5, w: "100%", align: "center", color: "702182", fontSize: 14, bold: true });
-    slide3.addText("Professional Journey", { x: 0, y: 1.0, w: "100%", align: "center", color: "702182", fontSize: 32, bold: true });
+    addSectionTitle(slide2, "ABOUT ME", "커피와 음료의 본질을 이해하는 개발자");
     
-    data.experiences.forEach((exp, i) => {
-      let yPos = 2.0 + (i * 0.8);
-      slide3.addText(`${exp.date} | ${exp.title}`, { x: 1.0, y: yPos, w: 11, fontSize: 14, bold: true, color: "702182" });
-      slide3.addText(exp.desc, { x: 1.0, y: yPos + 0.3, w: 11, fontSize: 12, color: "666666" });
+    // Profile Card Style
+    slide2.addShape(pptx.ShapeType.rect, { x: 0.8, y: 1.8, w: 3.8, h: 5.0, fill: { color: BANA_LIGHT }, line: { color: BANA_PURPLE, width: 0.5 } });
+    slide2.addImage({ path: data.profileImage, x: 1.0, y: 2.0, w: 3.4, h: 4.6 });
+    
+    // Content
+    slide2.addText(data.aboutText1, { 
+      x: 5.2, y: 2.0, w: 7.2, fontSize: 16, color: TEXT_DARK, fontFace: "Malgun Gothic", lineSpacing: 24 
+    });
+    slide2.addText(data.aboutText2, { 
+      x: 5.2, y: 4.2, w: 7.2, fontSize: 16, color: TEXT_DARK, fontFace: "Malgun Gothic", lineSpacing: 24 
     });
 
-    // 4. Skills
+    // Contact Info
+    slide2.addShape(pptx.ShapeType.rect, { x: 5.2, y: 6.2, w: 3.5, h: 0.6, fill: { color: BANA_LIGHT } });
+    slide2.addText("dukhee0522@gmail.com", { x: 5.4, y: 6.35, fontSize: 12, color: TEXT_GRAY, fontFace: "Arial" });
+    
+    slide2.addShape(pptx.ShapeType.rect, { x: 8.9, y: 6.2, w: 3.5, h: 0.6, fill: { color: BANA_LIGHT } });
+    slide2.addText("경기도 수원시", { x: 9.1, y: 6.35, fontSize: 12, color: TEXT_GRAY, fontFace: "Malgun Gothic" });
+
+    // 3. Experience (Timeline Style)
+    let slide3 = pptx.addSlide();
+    slide3.background = { color: BANA_LIGHT };
+    addSectionTitle(slide3, "EXPERIENCE", "Professional Journey");
+    
+    // Timeline Line
+    slide3.addShape(pptx.ShapeType.line, { x: 6.66, y: 1.8, w: 0, h: 5.2, line: { color: BANA_PURPLE, width: 1 } });
+
+    data.experiences.forEach((exp, i) => {
+      const isLeft = i % 2 !== 0;
+      const yPos = 1.9 + (i * 0.85);
+      
+      // Dot
+      slide3.addShape(pptx.ShapeType.ellipse, { x: 6.58, y: yPos + 0.1, w: 0.16, h: 0.16, fill: { color: BANA_PURPLE }, line: { color: WHITE, width: 2 } });
+      
+      // Card
+      const cardX = isLeft ? 1.0 : 7.2;
+      slide3.addShape(pptx.ShapeType.rect, { 
+        x: cardX, y: yPos, w: 5.2, h: 0.75, 
+        fill: { color: WHITE }, shadow: { type: "outer", color: "000000", blur: 5 } 
+      });
+      
+      slide3.addText(exp.date, { 
+        x: cardX + 0.2, y: yPos + 0.1, w: 4.8, fontSize: 10, color: BANA_PURPLE, fontFace: "Arial", bold: true 
+      });
+      slide3.addText(exp.title, { 
+        x: cardX + 0.2, y: yPos + 0.25, w: 4.8, fontSize: 14, color: TEXT_DARK, fontFace: "Malgun Gothic", bold: true 
+      });
+      slide3.addText(exp.desc, { 
+        x: cardX + 0.2, y: yPos + 0.45, w: 4.8, fontSize: 11, color: TEXT_GRAY, fontFace: "Arial" 
+      });
+    });
+
+    // 4. Skills (Grid Style)
     let slide4 = pptx.addSlide();
-    slide4.addText("Skills & Expertise", { x: 0, y: 0.5, w: "100%", align: "center", color: "702182", fontSize: 14, bold: true });
-    slide4.addText("Core Competencies", { x: 0, y: 1.0, w: "100%", align: "center", color: "702182", fontSize: 32, bold: true });
+    addSectionTitle(slide4, "SKILLS & EXPERTISE", "Core Competencies");
     
     data.skills.forEach((skill, i) => {
-      let xPos = 0.5 + (i * 2.5);
-      slide4.addShape(pptx.ShapeType.rect, { x: xPos, y: 2.5, w: 2.2, h: 3.5, fill: { color: "F8F4F9" } });
-      slide4.addText(skill.title, { x: xPos, y: 3.5, w: 2.2, align: "center", fontSize: 16, bold: true, color: "702182" });
-      slide4.addText(skill.desc, { x: xPos + 0.1, y: 4.2, w: 2.0, align: "center", fontSize: 12, color: "666666" });
+      let xPos = 0.6 + (i * 2.5);
+      // Card
+      slide4.addShape(pptx.ShapeType.rect, { 
+        x: xPos, y: 2.2, w: 2.3, h: 4.2, 
+        fill: { color: BANA_LIGHT } 
+      });
+      
+      // Icon Circle
+      slide4.addShape(pptx.ShapeType.ellipse, { 
+        x: xPos + 0.75, y: 2.6, w: 0.8, h: 0.8, 
+        fill: { color: WHITE }, shadow: { type: "outer", color: "000000", blur: 3 } 
+      });
+      
+      slide4.addText(skill.title, { 
+        x: xPos, y: 3.8, w: 2.3, align: "center", fontSize: 16, bold: true, color: BANA_PURPLE, fontFace: "Arial" 
+      });
+      slide4.addText(skill.desc, { 
+        x: xPos + 0.1, y: 4.6, w: 2.1, align: "center", fontSize: 12, color: TEXT_GRAY, fontFace: "Malgun Gothic", lineSpacing: 18
+      });
     });
 
     // 5. Philosophy
     let slide5 = pptx.addSlide();
     slide5.background = { color: "0F172A" };
-    slide5.addText("Philosophy", { x: 0, y: 1.5, w: "100%", align: "center", color: "702182", fontSize: 14, bold: true });
-    slide5.addText("현장의 경험을 담아,\n브랜드의 미래를 그립니다.", { x: 0, y: 2.2, w: "100%", align: "center", color: "FFFFFF", fontSize: 36, bold: true });
-    slide5.addText(`"${data.philosophy1}"`, { x: 1.5, y: 4.5, w: 10, align: "center", color: "CCCCCC", fontSize: 16, italic: true });
-    slide5.addText(`"${data.philosophy2}"`, { x: 1.5, y: 5.8, w: 10, align: "center", color: "CCCCCC", fontSize: 16, italic: true });
+    
+    // Background Image (if possible, otherwise dark gradient)
+    slide5.addText("PHILOSOPHY", { 
+      x: 0, y: 1.2, w: "100%", align: "center", color: BANA_PURPLE, fontSize: 14, bold: true, fontFace: "Arial", charSpacing: 4 
+    });
+    slide5.addText("현장의 경험을 담아,\n브랜드의 미래를 그립니다.", { 
+      x: 0, y: 1.8, w: "100%", align: "center", color: WHITE, fontSize: 44, bold: true, fontFace: "Malgun Gothic" 
+    });
+    slide5.addShape(pptx.ShapeType.rect, { x: 6.1, y: 3.8, w: 1.1, h: 0.05, fill: { color: BANA_PURPLE } });
+    
+    slide5.addText(`"${data.philosophy1}"`, { 
+      x: 1.5, y: 4.4, w: 10.3, align: "center", color: "CBD5E1", fontSize: 18, italic: true, fontFace: "Malgun Gothic", lineSpacing: 30 
+    });
+    slide5.addText(`"${data.philosophy2}"`, { 
+      x: 1.5, y: 5.8, w: 10.3, align: "center", color: "CBD5E1", fontSize: 18, italic: true, fontFace: "Malgun Gothic" 
+    });
 
     // 6. Closing
     let slide6 = pptx.addSlide();
-    slide6.addText("바나프레소와 함께할\n새로운 도약을 꿈꿉니다.", { x: 0, y: 2.0, w: "100%", align: "center", color: "702182", fontSize: 42, bold: true });
-    slide6.addText(data.closingText1, { x: 2.0, y: 4.0, w: 9, align: "center", color: "666666", fontSize: 16 });
-    slide6.addText(data.closingText2, { x: 2.0, y: 5.2, w: 9, align: "center", color: "666666", fontSize: 16 });
+    slide6.background = { color: WHITE };
+    
+    // Card Container
+    slide6.addShape(pptx.ShapeType.rect, { 
+      x: 1.5, y: 1.0, w: 10.3, h: 5.5, 
+      fill: { color: BANA_LIGHT } 
+    });
+    slide6.addShape(pptx.ShapeType.rect, { x: 1.5, y: 1.0, w: 10.3, h: 0.1, fill: { color: BANA_PURPLE } });
+
+    slide6.addText("바나프레소와 함께할\n새로운 도약을 꿈꿉니다.", { 
+      x: 1.5, y: 1.8, w: 10.3, align: "center", color: BANA_PURPLE, fontSize: 42, bold: true, fontFace: "Malgun Gothic" 
+    });
+    slide6.addText(data.closingText1, { 
+      x: 2.5, y: 3.8, w: 8.3, align: "center", color: TEXT_GRAY, fontSize: 17, fontFace: "Malgun Gothic", lineSpacing: 28 
+    });
+    slide6.addText(data.closingText2, { 
+      x: 2.5, y: 5.2, w: 8.3, align: "center", color: TEXT_GRAY, fontSize: 17, fontFace: "Malgun Gothic", bold: true 
+    });
 
     pptx.writeFile({ fileName: `Banapresso_Portfolio_${data.name}.pptx` });
   };
